@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Button from "@mui/material/Button"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
-  WhitelistData,
+  FeedbackData,
   camelCaseToRegularText,
   selectRawData,
   setDuplicateFreeData,
@@ -15,17 +15,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material"
 
 export default function RemoveDuplicates() {
-  const [duplicates, setDuplicates] = useState<WhitelistData>([])
+  const [duplicates, setDuplicates] = useState<FeedbackData[]>([])
+  const [pressed, setPressed] = useState<Boolean>(false)
   const data = useAppSelector(selectRawData)
   const dispatch = useAppDispatch()
 
   const handleButtonClick = () => {
     const uniquePairs: any = {}
-    const filteredArray: WhitelistData = []
-    const filteredOutArray: WhitelistData = []
+    const filteredArray: FeedbackData[] = []
+    const filteredOutArray: FeedbackData[] = []
 
     data.forEach((obj: any) => {
       const key = `${obj.email}-${obj.company}`
@@ -39,6 +41,7 @@ export default function RemoveDuplicates() {
 
     dispatch(setDuplicateFreeData(filteredArray))
     setDuplicates(filteredOutArray)
+    setPressed(true)
   }
 
   const keys = Object.keys(duplicates[0] || {})
@@ -52,8 +55,11 @@ export default function RemoveDuplicates() {
     >
       {data.length > 0 && (
         <Button variant="contained" onClick={handleButtonClick}>
-          Remove email-company pair duplicates
+          Remove email-company pair duplicates {pressed && "✅"}
         </Button>
+      )}
+      {duplicates.length > 0 && (
+        <Typography>Removed {duplicates.length} feedback</Typography>
       )}
       {duplicates.length > 0 && (
         <TableContainer>

@@ -1,10 +1,7 @@
 import React from "react"
 import { saveAs } from "file-saver"
 import { useAppSelector } from "../app/hooks"
-import {
-  WhitelistData,
-  selectDataGroupedByCompany,
-} from "../slices/whitelistDataSlice"
+import { selectDataGroupedByCompany } from "../slices/whitelistDataSlice"
 import { Button } from "@mui/material"
 
 export default function DownloadButton() {
@@ -16,7 +13,7 @@ export default function DownloadButton() {
     saveAs(blob, "data.csv")
   }
 
-  const convertToCSV = (data: WhitelistData) => {
+  const convertToCSV = (data: any) => {
     const companies = Object.keys(data)
     const keys = Object.keys(data[companies[0]] || {})
 

@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import Button from "@mui/material/Button"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
-  WhitelistData,
+  FeedbackData,
   camelCaseToRegularText,
   selectRawData,
   setData,
@@ -15,16 +15,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material"
 
 export default function Remove10sAnd1s() {
-  const [filteredOut, setFilteredOut] = useState<WhitelistData>([])
+  const [filteredOut, setFilteredOut] = useState<FeedbackData[]>([])
+  const [pressed, setPressed] = useState<Boolean>(false)
   const data = useAppSelector(selectRawData)
   const dispatch = useAppDispatch()
 
   const handleButtonClick = () => {
-    const filteredData: WhitelistData = []
-    const filteredOutData: WhitelistData = []
+    const filteredData: FeedbackData[] = []
 
     data.forEach((obj: any) => {
       const relevantRatings = Object.entries(obj).filter(
@@ -34,17 +35,14 @@ export default function Remove10sAnd1s() {
       const isAll1s = relevantRatings.every(([_, value]) => value === "1")
 
       if (isAll10s || isAll1s) {
-        filteredOutData.push(obj)
+        setFilteredOut((filteredOut) => [...filteredOut, obj])
       } else {
         filteredData.push(obj)
       }
     })
 
-    console.log("Filtered Data:", filteredData)
-    console.log("Filtered Out Data:", filteredOutData)
-
     dispatch(setData(filteredData))
-    setFilteredOut(filteredOutData)
+    setPressed(true)
   }
 
   const keys = Object.keys(filteredOut[0] || {})
@@ -58,8 +56,11 @@ export default function Remove10sAnd1s() {
     >
       {data.length > 0 && (
         <Button variant="contained" onClick={handleButtonClick}>
-          Remove all 10s and all 1s (Optional)
+          Remove all 10s and all 1s (Optional) {pressed && "✅"}
         </Button>
+      )}
+      {filteredOut.length > 0 && (
+        <Typography>Removed {filteredOut.length} feedback</Typography>
       )}
       {filteredOut.length > 0 && (
         <TableContainer>

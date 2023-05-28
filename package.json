@@ -1,5 +1,6 @@
 {
-  "name": "vite-template-redux",
+  "name": "subtle-whitelist-creator",
+  "homepage": "https://arasuludag.github.io/Subtle-Whitelist-Creator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -11,7 +12,9 @@
     "test": "vitest",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "type-check": "tsc"
+    "type-check": "tsc",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.0",
@@ -39,6 +42,7 @@
     "eslint": "^8.0.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
+    "gh-pages": "^5.0.0",
     "jsdom": "^21.1.0",
     "prettier": "^2.7.1",
     "prettier-config-nick": "^1.0.2",

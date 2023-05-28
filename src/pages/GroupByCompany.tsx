@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
   TableRow,
   Button,
   Stack,
+  Typography,
 } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
@@ -19,11 +20,13 @@ import {
 
 export default function MeanDataDisplay() {
   const dispatch = useAppDispatch()
+  const [pressed, setPressed] = useState<Boolean>(false)
   const groupedData = useAppSelector(selectDataGroupedByCompany)
   const emailFilteredData = useAppSelector(selectEmailFilteredData)
 
   const handleButtonClick = () => {
     dispatch(groupDataByCompany())
+    setPressed(true)
   }
 
   const ratings = Object.values(groupedData)
@@ -40,8 +43,13 @@ export default function MeanDataDisplay() {
     >
       {emailFilteredData.length > 0 && (
         <Button variant="contained" onClick={handleButtonClick}>
-          Group by company
+          Group by company {pressed && "✅"}
         </Button>
+      )}
+      {Object.keys(groupedData).length > 0 && (
+        <Typography>
+          There are {Object.keys(groupedData).length} companies in total
+        </Typography>
       )}
       {Object.keys(groupedData).length > 0 && (
         <div>
@@ -63,7 +71,10 @@ export default function MeanDataDisplay() {
                     <TableCell>{group}</TableCell>
                     {uniqueRatings.map((rating) => (
                       <TableCell key={rating}>
-                        {ratings[rating] || "-"}
+                        {
+                          // @ts-ignore
+                          ratings[rating] || "-"
+                        }
                       </TableCell>
                     ))}
                   </TableRow>

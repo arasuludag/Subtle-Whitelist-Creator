@@ -1,19 +1,64 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../app/store"
 
-export interface WhitelistData {
-  [key: string]: any
-}
-
-interface Ratings {
+export interface FeedbackData {
+  timestamp: string
+  email: string
+  company: string
+  hiresQualified: string
+  providesOnboarding: string
+  providesSourceMaterials: string
+  hasSubtitlingGuidelines: string
+  reasonableDeadlines: string
+  suppliesTools: string
+  fostersCollaborativeEnvironment: string
+  actsInGoodFaith: string
+  maintainsJobCommunication: string
+  maintainsTransparency: string
+  keepsPrivateInformation: string
+  creditsTranslator: string
+  authorFinalSay: string
+  paysOnTime: string
+  paysWithinReasonablePeriod: string
+  paysFairRates: string
+  paysForRushJobs: string
+  paysForLateHours: string
+  paysForAdditionalWork: string
+  offersPartialCompensation: string
+  coversBankTransferFee: string
   [key: string]: string
 }
 
-interface Company {
-  [key: string]: Ratings & { overall?: string }
+interface CompanyFeedback {
+  overall?: string
+  hiresQualified: string
+  providesOnboarding: string
+  providesSourceMaterials: string
+  hasSubtitlingGuidelines: string
+  reasonableDeadlines: string
+  suppliesTools: string
+  fostersCollaborativeEnvironment: string
+  actsInGoodFaith: string
+  maintainsJobCommunication: string
+  maintainsTransparency: string
+  keepsPrivateInformation: string
+  creditsTranslator: string
+  authorFinalSay: string
+  paysOnTime: string
+  paysWithinReasonablePeriod: string
+  paysFairRates: string
+  paysForRushJobs: string
+  paysForLateHours: string
+  paysForAdditionalWork: string
+  offersPartialCompensation: string
+  coversBankTransferFee: string
 }
 
-function groupArrayBy(array: WhitelistData, key: string): any {
+export interface CompanyFeedbackData {
+  [companyName: string]: CompanyFeedback
+}
+
+function groupArrayBy(array: FeedbackData[], key: string): CompanyFeedbackData {
   return array.reduce((grouped: any, obj: any) => {
     const groupKey = obj[key]
     if (!grouped[groupKey]) {
@@ -25,23 +70,27 @@ function groupArrayBy(array: WhitelistData, key: string): any {
   }, {})
 }
 
-function calculateMean(groupedData: any): any {
-  const result: any = {}
-  for (const groupKey in groupedData) {
-    if (groupedData.hasOwnProperty(groupKey)) {
-      const group = groupedData[groupKey]
-      const ratingsCount = group.length
-      const sum: any = group.reduce((acc: any, obj: any) => {
-        for (const prop in obj) {
-          if (obj.hasOwnProperty(prop) && !isNaN(parseFloat(obj[prop]))) {
-            if (!acc[prop]) {
-              acc[prop] = 0
+function calculateMean(groupedData: CompanyFeedbackData): CompanyFeedbackData {
+  const result: CompanyFeedbackData = {}
+  for (const groupName in groupedData) {
+    if (groupedData.hasOwnProperty(groupName)) {
+      const group = groupedData[groupName]
+      const ratingsCount = Object.keys(group).length
+      const sum: any = {}
+      for (const feedback of Object.values(group)) {
+        for (const prop in feedback) {
+          if (
+            feedback.hasOwnProperty(prop) &&
+            prop !== "overall" && // Exclude the "overall" property from calculations
+            !isNaN(parseFloat(feedback[prop]))
+          ) {
+            if (!sum[prop]) {
+              sum[prop] = 0
             }
-            acc[prop] += parseFloat(obj[prop])
+            sum[prop] += parseFloat(feedback[prop])
           }
         }
-        return acc
-      }, {})
+      }
 
       const mean: any = {}
       for (const prop in sum) {
@@ -49,13 +98,13 @@ function calculateMean(groupedData: any): any {
           mean[prop] = (sum[prop] / ratingsCount).toFixed(1)
         }
       }
-      result[groupKey] = mean
+      result[groupName] = mean
     }
   }
   return result
 }
 
-function removeKeyFromArray(array: WhitelistData, key: string) {
+function removeKeyFromArray(array: FeedbackData[], key: string) {
   return array.map(function (obj: any) {
     var newObj = Object.assign({}, obj)
     delete newObj[key]
@@ -74,7 +123,7 @@ export function camelCaseToRegularText(camelCaseString: string) {
 }
 
 // Function to calculate the combined mean for a company
-function calculateCombinedMean(ratings: Ratings): string {
+function calculateCombinedMean(ratings: CompanyFeedback): string {
   const ratingValues = Object.values(ratings).map((value) => parseFloat(value))
   const sum = ratingValues.reduce((acc, val) => acc + val, 0)
   const mean = sum / ratingValues.length
@@ -83,8 +132,10 @@ function calculateCombinedMean(ratings: Ratings): string {
 }
 
 // Function to add the "overall" key without modifying the original object
-function addOverallRating(companyData: Company): Company {
-  const updatedData: Company = {}
+function addOverallRating(
+  companyData: CompanyFeedbackData,
+): CompanyFeedbackData {
+  const updatedData: CompanyFeedbackData = {}
 
   for (const [company, ratings] of Object.entries(companyData)) {
     const overall = calculateCombinedMean(ratings)
@@ -95,25 +146,25 @@ function addOverallRating(companyData: Company): Company {
 }
 
 const initialState: {
-  rawData: WhitelistData
-  filteredDuplicatesData: WhitelistData
-  filteredEmailData: WhitelistData
-  dataGroupedByCompany: WhitelistData
+  rawData: FeedbackData[]
+  filteredDuplicatesData: FeedbackData[]
+  filteredEmailData: FeedbackData[]
+  dataGroupedByCompany: CompanyFeedbackData
 } = {
   rawData: [],
   filteredDuplicatesData: [],
   filteredEmailData: [],
-  dataGroupedByCompany: [],
+  dataGroupedByCompany: {},
 }
 
 const whitelistDataSlice = createSlice({
   name: "whitelistData",
   initialState,
   reducers: {
-    setData: (state, action: PayloadAction<WhitelistData>) => {
+    setData: (state, action: PayloadAction<FeedbackData[]>) => {
       state.rawData = action.payload
     },
-    setDuplicateFreeData: (state, action: PayloadAction<WhitelistData>) => {
+    setDuplicateFreeData: (state, action: PayloadAction<FeedbackData[]>) => {
       state.filteredDuplicatesData = action.payload
     },
     groupDataByCompany: (state) => {

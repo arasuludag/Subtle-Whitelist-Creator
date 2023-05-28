@@ -16,18 +16,20 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material"
 
 export default function CheckForEmailMismatch() {
   const [flaggedEmails, setFlaggedEmails] = useState([])
   const [loading, setLoading] = useState(false)
+  const [pressed, setPressed] = useState<Boolean>(false)
   const data = useAppSelector(selectDuplicateFilteredData)
   const dispatch = useAppDispatch()
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     setLoading(true)
     const emails = data.map((entry: any) => entry.email)
 
-    axios
+    await axios
       .post(
         "https://subtle-subtitlers.org.uk/wp-json/discord-bot-link/v1/check-emails",
         { emails },
@@ -41,6 +43,8 @@ export default function CheckForEmailMismatch() {
         console.error("Error:", error)
         // Handle any errors that occur during the request
       })
+
+    setPressed(true)
   }
 
   return (
@@ -52,8 +56,11 @@ export default function CheckForEmailMismatch() {
     >
       {data.length > 0 && (
         <Button variant="contained" onClick={handleButtonClick}>
-          Filter out non-subtle emails
+          Filter out non-subtle emails {pressed && "✅"}
         </Button>
+      )}
+      {flaggedEmails.length > 0 && (
+        <Typography>Removed {flaggedEmails.length} emails</Typography>
       )}
       {loading ? (
         <CircularProgress />
