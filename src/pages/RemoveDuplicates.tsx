@@ -62,7 +62,7 @@ export default function RemoveDuplicates() {
         <Typography>Removed {duplicates.length} feedback</Typography>
       )}
       {duplicates.length > 0 && (
-        <TableContainer>
+        <TableContainer sx={{ maxWidth: "90vw", maxHeight: "2000px" }}>
           <Table size="small">
             <TableHead>
               <TableRow>

@@ -53,11 +53,11 @@ export default function MeanDataDisplay() {
       )}
       {Object.keys(groupedData).length > 0 && (
         <div>
-          <TableContainer>
+          <TableContainer sx={{ maxWidth: "90vw", maxHeight: "2000px" }}>
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>company</TableCell>
+                  <TableCell>Company</TableCell>
                   {uniqueRatings.map((rating) => (
                     <TableCell key={rating}>
                       {snakeCaseToRegularText(rating)}

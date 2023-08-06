@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material"
-import "./App.css"
 import CSVFileInput from "./pages/CSVFileInput"
 import GroupByCompany from "./pages/GroupByCompany"
 import CssBaseline from "@mui/material/CssBaseline"

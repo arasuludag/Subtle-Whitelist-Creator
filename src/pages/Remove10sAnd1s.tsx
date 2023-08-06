@@ -63,7 +63,7 @@ export default function Remove10sAnd1s() {
         <Typography>Removed {filteredOut.length} feedback</Typography>
       )}
       {filteredOut.length > 0 && (
-        <TableContainer>
+        <TableContainer sx={{ maxWidth: "90vw", maxHeight: "2000px" }}>
           <Table size="small">
             <TableHead>
               <TableRow>
