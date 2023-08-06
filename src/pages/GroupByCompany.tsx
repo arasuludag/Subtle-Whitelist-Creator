@@ -12,10 +12,10 @@ import {
 } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
-  camelCaseToRegularText,
   groupDataByCompany,
   selectDataGroupedByCompany,
   selectEmailFilteredData,
+  snakeCaseToRegularText,
 } from "../slices/whitelistDataSlice"
 
 export default function MeanDataDisplay() {
@@ -60,7 +60,7 @@ export default function MeanDataDisplay() {
                   <TableCell>company</TableCell>
                   {uniqueRatings.map((rating) => (
                     <TableCell key={rating}>
-                      {camelCaseToRegularText(rating)}
+                      {snakeCaseToRegularText(rating)}
                     </TableCell>
                   ))}
                 </TableRow>

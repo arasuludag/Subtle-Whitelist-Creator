@@ -3,9 +3,9 @@ import Button from "@mui/material/Button"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
   FeedbackData,
-  camelCaseToRegularText,
   selectRawData,
   setDuplicateFreeData,
+  snakeCaseToRegularText,
 } from "../slices/whitelistDataSlice"
 import {
   Stack,
@@ -67,7 +67,7 @@ export default function RemoveDuplicates() {
             <TableHead>
               <TableRow>
                 {keys.map((key) => (
-                  <TableCell key={key}>{camelCaseToRegularText(key)}</TableCell>
+                  <TableCell key={key}>{snakeCaseToRegularText(key)}</TableCell>
                 ))}
               </TableRow>
             </TableHead>

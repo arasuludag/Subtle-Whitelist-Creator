@@ -2,56 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../app/store"
 
 export interface FeedbackData {
-  timestamp: string
-  email: string
-  company: string
-  hiresQualified: string
-  providesOnboarding: string
-  providesSourceMaterials: string
-  hasSubtitlingGuidelines: string
-  reasonableDeadlines: string
-  suppliesTools: string
-  fostersCollaborativeEnvironment: string
-  actsInGoodFaith: string
-  maintainsJobCommunication: string
-  maintainsTransparency: string
-  keepsPrivateInformation: string
-  creditsTranslator: string
-  authorFinalSay: string
-  paysOnTime: string
-  paysWithinReasonablePeriod: string
-  paysFairRates: string
-  paysForRushJobs: string
-  paysForLateHours: string
-  paysForAdditionalWork: string
-  offersPartialCompensation: string
-  coversBankTransferFee: string
-  [key: string]: string
+  [key: string]: any
 }
 
-interface CompanyFeedback {
-  overall?: string
-  hiresQualified: string
-  providesOnboarding: string
-  providesSourceMaterials: string
-  hasSubtitlingGuidelines: string
-  reasonableDeadlines: string
-  suppliesTools: string
-  fostersCollaborativeEnvironment: string
-  actsInGoodFaith: string
-  maintainsJobCommunication: string
-  maintainsTransparency: string
-  keepsPrivateInformation: string
-  creditsTranslator: string
-  authorFinalSay: string
-  paysOnTime: string
-  paysWithinReasonablePeriod: string
-  paysFairRates: string
-  paysForRushJobs: string
-  paysForLateHours: string
-  paysForAdditionalWork: string
-  offersPartialCompensation: string
-  coversBankTransferFee: string
+export interface CompanyFeedback {
+  [key: string]: any
 }
 
 export interface CompanyFeedbackData {
@@ -122,6 +77,13 @@ export function camelCaseToRegularText(camelCaseString: string) {
   return regularText
 }
 
+export function snakeCaseToRegularText(snakeCase: string): string {
+  return snakeCase
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+}
+
 // Function to calculate the combined mean for a company
 function calculateCombinedMean(ratings: CompanyFeedback): string {
   const ratingValues = Object.values(ratings).map((value) => parseFloat(value))
@@ -138,8 +100,8 @@ function addOverallRating(
   const updatedData: CompanyFeedbackData = {}
 
   for (const [company, ratings] of Object.entries(companyData)) {
-    const overall = calculateCombinedMean(ratings)
-    updatedData[company] = { overall, ...ratings }
+    const average_score = calculateCombinedMean(ratings)
+    updatedData[company] = { average_score, ...ratings }
   }
 
   return updatedData
@@ -170,7 +132,7 @@ const whitelistDataSlice = createSlice({
     groupDataByCompany: (state) => {
       const groupedByCompany = groupArrayBy(
         removeKeyFromArray(state.filteredEmailData, "timestamp"),
-        "company",
+        "Title",
       )
 
       const meanByCompany = calculateMean(groupedByCompany)

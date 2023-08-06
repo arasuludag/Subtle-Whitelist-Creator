@@ -18,7 +18,7 @@ export default function DownloadButton() {
     const keys = Object.keys(data[companies[0]] || {})
 
     // Generate the header row
-    const header = `Company,${keys.join(",")}`
+    const header = `Title,${keys.join(",")}`
 
     // Generate the data rows for each company
     const rows = companies.map((company) => {

@@ -3,9 +3,9 @@ import Button from "@mui/material/Button"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
   FeedbackData,
-  camelCaseToRegularText,
   selectRawData,
   setData,
+  snakeCaseToRegularText,
 } from "../slices/whitelistDataSlice"
 import {
   Stack,
@@ -29,7 +29,7 @@ export default function Remove10sAnd1s() {
 
     data.forEach((obj: any) => {
       const relevantRatings = Object.entries(obj).filter(
-        ([key]) => key !== "timestamp" && key !== "company" && key !== "email",
+        ([key]) => key !== "timestamp" && key !== "Title" && key !== "email",
       )
       const isAll10s = relevantRatings.every(([_, value]) => value === "10")
       const isAll1s = relevantRatings.every(([_, value]) => value === "1")
@@ -68,7 +68,7 @@ export default function Remove10sAnd1s() {
             <TableHead>
               <TableRow>
                 {keys.map((key) => (
-                  <TableCell key={key}>{camelCaseToRegularText(key)}</TableCell>
+                  <TableCell key={key}>{snakeCaseToRegularText(key)}</TableCell>
                 ))}
               </TableRow>
             </TableHead>
