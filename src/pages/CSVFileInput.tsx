@@ -41,10 +41,15 @@ export default function CSVFileInput() {
           "rush_job_compensation",
           "recommend_likelihood",
         ]
-        const json: FeedbackData[] = await csvtojson({
+        let json: FeedbackData[] = await csvtojson({
           noheader: false,
           headers: customHeaders,
         }).fromString(csvString)
+
+        json = json.map((item) => ({
+          ...item,
+          email: item.email.toLowerCase(),
+        }))
 
         dispatch(setData(json))
         setJSONData(json)

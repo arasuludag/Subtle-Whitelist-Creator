@@ -30,7 +30,7 @@ export default function RemoveDuplicates() {
     const filteredOutArray: FeedbackData[] = []
 
     data.forEach((obj: any) => {
-      const key = `${obj.email}-${obj.company}`
+      const key = `${obj.email}-${obj.Title}`
       if (!uniquePairs[key]) {
         uniquePairs[key] = true
         filteredArray.push(obj)
