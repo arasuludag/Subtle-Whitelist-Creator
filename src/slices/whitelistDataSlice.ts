@@ -59,6 +59,22 @@ function calculateMean(groupedData: CompanyFeedbackData): CompanyFeedbackData {
   return result
 }
 
+export function countNumOfVotesInCompanies(feedbackData: CompanyFeedbackData): {
+  [companyName: string]: number
+} {
+  const itemCounts: { [companyName: string]: number } = {}
+
+  for (const companyName in feedbackData) {
+    if (feedbackData.hasOwnProperty(companyName)) {
+      const companyFeedback = feedbackData[companyName]
+      const itemCount = Object.keys(companyFeedback).length
+      itemCounts[companyName] = itemCount
+    }
+  }
+
+  return itemCounts
+}
+
 function removeKeyFromArray(array: FeedbackData[], key: string) {
   return array.map(function (obj: any) {
     var newObj = Object.assign({}, obj)
@@ -112,11 +128,15 @@ const initialState: {
   filteredDuplicatesData: FeedbackData[]
   filteredEmailData: FeedbackData[]
   dataGroupedByCompany: CompanyFeedbackData
+  numOfVotesThreshold: number
+  voteByCompany: { [key: string]: number }
 } = {
   rawData: [],
   filteredDuplicatesData: [],
   filteredEmailData: [],
   dataGroupedByCompany: {},
+  numOfVotesThreshold: 10,
+  voteByCompany: {},
 }
 
 const whitelistDataSlice = createSlice({
@@ -135,6 +155,8 @@ const whitelistDataSlice = createSlice({
         "Title",
       )
 
+      state.voteByCompany = countNumOfVotesInCompanies(groupedByCompany)
+
       const meanByCompany = calculateMean(groupedByCompany)
 
       state.dataGroupedByCompany = addOverallRating(meanByCompany)
@@ -144,6 +166,10 @@ const whitelistDataSlice = createSlice({
         (obj: any) => !action.payload.includes(obj.email),
       )
     },
+
+    setNumOfVotesThreshold: (state, action: PayloadAction<number>) => {
+      state.numOfVotesThreshold = action.payload
+    },
   },
 })
 
@@ -152,10 +178,28 @@ export const {
   groupDataByCompany,
   filterDataByEmail,
   setDuplicateFreeData,
+  setNumOfVotesThreshold,
 } = whitelistDataSlice.actions
 
-export const selectDataGroupedByCompany = (state: RootState) =>
-  state.whitelistData.dataGroupedByCompany
+export const selectDataGroupedByCompany = (state: RootState) => {
+  const dataGroupedByCompany = state.whitelistData.dataGroupedByCompany
+  const voteByCompany = state.whitelistData.voteByCompany
+
+  // Filtering based on the vote count threshold
+  const filteredData: CompanyFeedbackData = {}
+
+  for (const companyName in dataGroupedByCompany) {
+    if (dataGroupedByCompany.hasOwnProperty(companyName)) {
+      const voteCount = voteByCompany[companyName] || 0
+
+      if (voteCount >= state.whitelistData.numOfVotesThreshold) {
+        filteredData[companyName] = dataGroupedByCompany[companyName]
+      }
+    }
+  }
+
+  return filteredData
+}
 export const selectRawData = (state: RootState) => state.whitelistData.rawData
 export const selectDuplicateFilteredData = (state: RootState) =>
   state.whitelistData.filteredDuplicatesData

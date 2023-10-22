@@ -9,12 +9,14 @@ import {
   Button,
   Stack,
   Typography,
+  Slider,
 } from "@mui/material"
 import { useAppDispatch, useAppSelector } from "../app/hooks"
 import {
   groupDataByCompany,
   selectDataGroupedByCompany,
   selectEmailFilteredData,
+  setNumOfVotesThreshold,
   snakeCaseToRegularText,
 } from "../slices/whitelistDataSlice"
 
@@ -34,6 +36,10 @@ export default function MeanDataDisplay() {
     .flat()
   const uniqueRatings = Array.from(new Set(ratings))
 
+  const handleThresholdChange = (value: number | number[]) => {
+    if (typeof value === "number") dispatch(setNumOfVotesThreshold(value))
+  }
+
   return (
     <Stack
       direction="column"
@@ -47,9 +53,23 @@ export default function MeanDataDisplay() {
         </Button>
       )}
       {Object.keys(groupedData).length > 0 && (
-        <Typography>
-          There are {Object.keys(groupedData).length} companies in total
-        </Typography>
+        <>
+          <Typography>Threshold:</Typography>
+          <Slider
+            aria-label="Threshold"
+            defaultValue={10}
+            valueLabelDisplay="auto"
+            onChange={(_, value) => handleThresholdChange(value)}
+            sx={{ width: "300px" }}
+            step={1}
+            marks
+            min={1}
+            max={25}
+          />
+          <Typography>
+            There are {Object.keys(groupedData).length} companies in total
+          </Typography>
+        </>
       )}
       {Object.keys(groupedData).length > 0 && (
         <div>
